@@ -1,0 +1,32 @@
+{
+    "name": "TravelerProfileAPI",
+    "description": "Returns traveler identity, frequent flyer details, contact info, preferences, and travel history.",
+    "endpoints": ["/profile/v2/getTraveler"],
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "traveler_id": { "type": "string" },
+        "email": { "type": "string", "format": "email" }
+      },
+      "required": ["traveler_id"]
+    },
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "traveler_id": { "type": "string" },
+        "name": { "type": "string" },
+        "frequent_flyer_number": { "type": "string" },
+        "tier": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "preferences": {
+          "type": "object",
+          "properties": {
+            "meal": { "type": "string" },
+            "seat": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+  
