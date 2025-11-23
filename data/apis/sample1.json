@@ -1,0 +1,27 @@
+{
+    "name": "FlightStatusAPI",
+    "description": "Provides real-time flight status, delays, departure/arrival information, and gate assignments.",
+    "endpoints": ["/flight-status/v1/getStatus"],
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "flight_number": { "type": "string" },
+        "airline_code": { "type": "string" },
+        "departure_date": { "type": "string", "format": "date" }
+      },
+      "required": ["flight_number", "airline_code", "departure_date"]
+    },
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "flight_number": { "type": "string" },
+        "airline_code": { "type": "string" },
+        "status": { "type": "string" },
+        "departure_gate": { "type": "string" },
+        "arrival_gate": { "type": "string" },
+        "departure_time": { "type": "string", "format": "date-time" },
+        "arrival_time": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+  
