@@ -93,8 +93,8 @@ def generate_mapping(
     to an EXISTING API output schema.
 
     This tells the developer:
-        - Which custom output fields should populate
-          which existing output fields.
+        - Which existing output fields should populate
+          which custom output fields.
         - What transformations (if any) are needed.
     """
 
@@ -106,8 +106,8 @@ Map fields from a NEW custom API’s output schema
 TO the fields in an EXISTING API’s output schema.
 
 The goal:
-Tell the developer exactly which field in the NEW API output
-should fill which field in the EXISTING API output.
+Tell the developer exactly which field in the EXISTING API output
+should fill which field in the NEW CUSTOM API output.
 
 Output Format (strict JSON):
 {{
