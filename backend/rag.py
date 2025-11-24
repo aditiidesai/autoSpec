@@ -51,6 +51,42 @@ def embed_text(text: str) -> List[float]:
 
 def ingest_api_spec(api_name, description, input_schema, output_schema):
     # Convert dict → JSON string (allowed by Chroma)
+    # 1. Embed DESCRIPTION
+    collection.add(
+        ids=[api_name + "_desc"],
+        embeddings=[embed_text(description)],
+        documents=[description],
+        metadatas=[{
+            "api_name": api_name,
+            "type": "description"
+        }]
+    )
+    
+    # 2. Embed INPUT SCHEMA ONLY
+    collection.add(
+        ids=[api_name + "_input"],
+        embeddings=[embed_text(json.dumps(input_schema))],
+        documents=[json.dumps(input_schema)],
+        metadatas=[{
+            "api_name": api_name,
+            "type": "input_schema"
+        }]
+    )
+    
+    # 3. Embed OUTPUT SCHEMA ONLY
+    collection.add(
+        ids=[api_name + "_output"],
+        embeddings=[embed_text(json.dumps(output_schema))],
+        documents=[json.dumps(output_schema)],
+        metadatas=[{
+            "api_name": api_name,
+            "type": "output_schema"
+        }]
+    )
+
+    print(f"🔥 Ingested 3 embeddings for: {api_name}")
+
+    """
     meta = {
         "api_name": api_name,
         "description": description,
@@ -78,7 +114,7 @@ def ingest_api_spec(api_name, description, input_schema, output_schema):
 
 
     print(f"🔍 Ingested API → {api_name}")
-
+"""
 
 # -----------------------------
 # 4. Bulk Ingestion
@@ -117,10 +153,13 @@ def retrieve_similar_api(output_schema: dict, k: int = 1):
  
     query_embedding = embed_text(search_text)
 
+
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=k
+        n_results=k,
+        where={"type": "output_schema"}
     )
+
     print (results)
     if len(results["ids"][0]) == 0:
         return None
@@ -131,9 +170,11 @@ def retrieve_similar_api(output_schema: dict, k: int = 1):
 
     result_obj= {
         "name": top_metadata["api_name"],
-        "description": top_metadata["description"],
-        "input_schema": top_metadata["input_schema"],
-        "output_schema": top_metadata["output_schema"],
+        "description": results["documents"][0] if top_metadata["type"] == "description" else None,
+        "input_schema": results["documents"][0] if top_metadata["type"] == "input_schema" else None,
+        "output_schema": results["documents"][0] if top_metadata["type"] == "output_schema" else None,
+        #"input_schema": top_metadata["input_schema"],
+        #"output_schema": top_metadata["output_schema"],
         "distance": distance
     }
 
@@ -149,6 +190,13 @@ def retrieve_similar_api(output_schema: dict, k: int = 1):
 # -----------------------------
 # 6. Utility: Reset Vector Store
 # -----------------------------
+def print_api(api_name):
+    data = collection.get()
+    for i, meta in enumerate(data["metadatas"]):
+        if meta["api_name"] == api_name:
+            print(f"\nID: {data['ids'][i]}")
+            print(f"Type: {meta['type']}")
+            print(f"Document: {data['documents'][i][:200]}...")
 
 def clear_all():
     """
