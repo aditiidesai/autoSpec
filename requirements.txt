@@ -2,7 +2,7 @@
 streamlit==1.32.2
 
 # --- LLM + OpenAI ---
-openai==1.23.6
+openai==2.8.1
 tiktoken==0.7.0
 python-dotenv==1.0.1
 
